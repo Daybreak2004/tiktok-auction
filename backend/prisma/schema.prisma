@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt    @id @default(autoincrement())
+  username  String    @unique @db.VarChar(50)
+  nickname  String    @db.VarChar(50)
+  avatar    String?
+  phone     String?   @db.VarChar(20)
+  passwordHash String @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  bids     Bid[]
+  orders   Order[]
+}
+
+model Merchant {
+  id        BigInt    @id @default(autoincrement())
+  username  String    @unique @db.VarChar(50)
+  nickname  String    @db.VarChar(50)
+  avatar    String?
+  passwordHash String @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  products Product[]
+  orders   Order[]
+}
+
+model Product {
+  id                BigInt    @id @default(autoincrement())
+  merchantId        BigInt
+  name              String    @db.VarChar(200)
+  description       String?   @db.Text
+  images            String    @db.Json
+  coverImage        String?   @db.VarChar(255)
+  status            String    @default("pending") @db.VarChar(20)
+  startPrice        Decimal   @db.Decimal(12, 2) @default(0)
+  minIncrement      Decimal   @db.Decimal(12, 2) @default(1)
+  maxPrice          Decimal?  @db.Decimal(12, 2)
+  durationSeconds   Int       @default(300)
+  autoExtendSeconds Int       @default(15)
+  extendThresholdSeconds Int  @default(10)
+  startedAt         DateTime?
+  endedAt           DateTime?
+  finalPrice        Decimal?  @db.Decimal(12, 2)
+  winnerUserId      BigInt?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  bids     Bid[]
+  orders   Order[]
+
+  @@index([merchantId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+model Bid {
+  id        BigInt    @id @default(autoincrement())
+  productId BigInt
+  userId    BigInt
+  price     Decimal   @db.Decimal(12, 2)
+  bidTime   DateTime  @default(now()) @db.Timestamp(3)
+  isWinning Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([productId, price])
+}
+
+model Order {
+  id          BigInt    @id @default(autoincrement())
+  orderNo     String    @unique @db.VarChar(64)
+  productId   BigInt
+  userId      BigInt
+  merchantId  BigInt
+  finalPrice  Decimal   @db.Decimal(12, 2)
+  status      String    @default("pending_payment") @db.VarChar(30)
+  paymentTime DateTime?
+  shipTime    DateTime?
+  completeTime DateTime?
+  address     String?   @db.Json
+  remark      String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([merchantId])
+  @@index([productId])
+  @@index([status])
+}
+
+model LiveRoom {
+  id              BigInt    @id @default(autoincrement())
+  merchantId      BigInt
+  name            String    @db.VarChar(100)
+  coverImage      String?   @db.VarChar(255)
+  status          String    @default("offline") @db.VarChar(20)
+  currentProductId BigInt?
+  onlineCount     Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([status])
+}
