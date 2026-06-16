@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { User, LoginResponse } from '@/types/user'
+import type { User } from '@/types/user'
 import { getToken, setToken, removeToken, isAuthenticated } from '@/utils/auth'
 import { login, getProfile } from '@/services/auth'
 
