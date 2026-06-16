@@ -1,17 +1,16 @@
 import { create } from 'zustand'
-import type { Product } from '@/types/product'
 import { getProductList } from '@/services/product'
 
 interface ProductState {
-  productList: Product[]
-  currentProduct: Product | null
+  productList: any[]
+  currentProduct: any | null
   loading: boolean
   total: number
   fetchProducts: (params?: any) => Promise<void>
-  setCurrentProduct: (product: Product | null) => void
+  setCurrentProduct: (product: any | null) => void
 }
 
-export const useProductStore = create<ProductState>((set) => ({
+export const useProductStore = create<ProductState>((set: any) => ({
   productList: [],
   currentProduct: null,
   bidHistory: [],
@@ -21,7 +20,7 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async (params) => {
     set({ loading: true })
     try {
-      const res = await getProductList(params)
+      const res: any = await getProductList(params)
       set({
         productList: res.list,
         total: res.total,

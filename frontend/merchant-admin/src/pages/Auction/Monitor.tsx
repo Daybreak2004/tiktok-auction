@@ -5,7 +5,7 @@ import { DollarOutlined, ClockCircleOutlined, TrophyOutlined, StopOutlined } fro
 
 const AuctionMonitor: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const [currentPrice, setCurrentPrice] = useState(0)
+  const [currentPrice] = useState(0)
   const [countdown, setCountdown] = useState(300)
 
   useEffect(() => {

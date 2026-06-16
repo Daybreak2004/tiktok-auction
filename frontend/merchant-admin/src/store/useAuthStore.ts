@@ -1,11 +1,10 @@
 import { create } from 'zustand'
-import type { MerchantUser } from '@/types/auth'
 import { getToken, setToken, removeToken, isAuthenticated } from '@/utils/auth'
 import { login, getProfile } from '@/services/auth'
 
 interface AuthState {
   token: string | null
-  user: MerchantUser | null
+  user: any
   isLoggedIn: boolean
   loading: boolean
   login: (username: string, password: string) => Promise<void>
@@ -13,7 +12,7 @@ interface AuthState {
   logout: () => void
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set: any, get: any) => ({
   token: getToken(),
   user: null,
   isLoggedIn: isAuthenticated(),
@@ -22,7 +21,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (username: string, password: string) => {
     set({ loading: true })
     try {
-      const res = await login({ username, password })
+      const res: any = await login({ username, password })
       setToken(res.token)
       set({
         token: res.token,
@@ -38,7 +37,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   fetchProfile: async () => {
     try {
-      const userInfo = await getProfile()
+      const userInfo: any = await getProfile()
       set({ user: userInfo })
     } catch (error) {
       get().logout()
