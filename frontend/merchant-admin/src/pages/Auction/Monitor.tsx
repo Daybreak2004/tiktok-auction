@@ -58,7 +58,7 @@ const AuctionMonitor: React.FC = () => {
                     description={`出价: ¥${item.price}`}
                   />
                   {item.rank === 1 && <Tag color="gold">第一名</Tag>}
-                </List.Item.Meta>
+                </List.Item>
               )}
             />
           </Card>
