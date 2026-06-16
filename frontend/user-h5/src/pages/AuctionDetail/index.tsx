@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Button, Statistic, List, Avatar, Toast, FloatingBubble } from 'antd-mobile'
+import { Card, List, Avatar, Toast, FloatingBubble } from 'antd-mobile'
 import { useParams } from 'react-router-dom'
-import { DollarOutline, ClockOutline, TrophyOutline } from 'antd-mobile-icons'
+import { submitBid, getBidHistory } from '@/services/product'
+import { useProductStore } from '@/store/useProductStore'
 
 const AuctionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [currentPrice, setCurrentPrice] = useState(0)
   const [countdown, setCountdown] = useState(300)
+  const { bidHistory, setBidHistory } = useProductStore()
+
+  useEffect(() => {
+    if (id) {
+      getBidHistory(parseInt(id)).then((data: any) => {
+        setBidHistory(data)
+      })
+    }
+  }, [id, setBidHistory])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -15,8 +25,16 @@ const AuctionDetail: React.FC = () => {
     return () => clearInterval(timer)
   }, [])
 
-  const handleBid = () => {
-    Toast.show('出价成功！')
+  const handleBid = async () => {
+    if (!id) return
+    try {
+      const nextPrice = currentPrice + 1
+      const res: any = await submitBid(parseInt(id), nextPrice)
+      setCurrentPrice(res.currentPrice)
+      Toast.show('出价成功！')
+    } catch (error) {
+      Toast.show('出价失败')
+    }
   }
 
   return (
@@ -24,42 +42,40 @@ const AuctionDetail: React.FC = () => {
       <div style={{ padding: 16 }}>
         <Card>
           <div style={{ textAlign: 'center', padding: 20 }}>
-            <Statistic
-              title="当前价格"
-              value={currentPrice}
-              precision={2}
-              suffix="元"
-              valueStyle={{ color: '#ff4d4f', fontSize: 48, fontWeight: 'bold' }}
-            />
+            <div style={{ fontSize: 14, color: '#999', marginBottom: 8 }}>当前价格</div>
+            <div style={{ fontSize: 48, fontWeight: 'bold', color: '#ff4d4f' }}>
+              ¥{currentPrice.toFixed(2)}
+            </div>
           </div>
         </Card>
 
         <Card style={{ marginTop: 12 }}>
           <div style={{ textAlign: 'center', padding: 16 }}>
-            <Statistic
-              title="剩余时间"
-              value={countdown}
-              suffix="秒"
-              valueStyle={{ color: countdown <= 10 ? '#ff4d4f' : '#1677ff', fontSize: 36, fontWeight: 'bold' }}
-            />
+            <div style={{ fontSize: 14, color: '#999', marginBottom: 8 }}>剩余时间</div>
+            <div style={{ fontSize: 36, fontWeight: 'bold', color: countdown <= 10 ? '#ff4d4f' : '#1677ff' }}>
+              {countdown} 秒
+            </div>
           </div>
         </Card>
 
         <Card title="实时排行榜" style={{ marginTop: 12 }}>
           <List>
-            <List.Item
-              prefix={<Avatar />}
-              description="出价: ¥0.00"
-            >
-              用户昵称
-            </List.Item>
+            {bidHistory.map((item) => (
+              <List.Item
+                key={item.id}
+                prefix={<Avatar src={item.avatar || 'https://via.placeholder.com/40'} />}
+                description={`出价: ¥${item.price.toFixed(2)}`}
+              >
+                {item.nickname}
+              </List.Item>
+            ))}
           </List>
         </Card>
       </div>
 
       <FloatingBubble
         axis="y"
-        style={{ '--background': '#ff4d4f', '--color': '#fff' }}
+        style={{ '--background': '#ff4d4f' } as React.CSSProperties}
         onClick={handleBid}
       >
         立即出价

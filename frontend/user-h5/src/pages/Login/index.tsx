@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Form, Input, Button, Card, Toast } from 'antd-mobile'
-import { UserOutline, LockOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 
@@ -44,10 +43,10 @@ const Login: React.FC = () => {
           }
         >
           <Form.Item name="username" label="用户名" rules={[{ required: true }]}>
-            <Input placeholder="请输入用户名" prefix={<UserOutline />} />
+            <Input placeholder="请输入用户名" />
           </Form.Item>
           <Form.Item name="password" label="密码" rules={[{ required: true }]}>
-            <Input type="password" placeholder="请输入密码" prefix={<LockOutline />} />
+            <Input type="password" placeholder="请输入密码" />
           </Form.Item>
         </Form>
       </Card>

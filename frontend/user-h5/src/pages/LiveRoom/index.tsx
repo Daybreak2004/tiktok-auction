@@ -1,16 +1,10 @@
 import React from 'react'
-import { Card, Video, Button } from 'antd-mobile'
 
 const LiveRoom: React.FC = () => {
   return (
     <div>
-      <div style={{ width: '100%', aspectRatio: '16/9', background: '#000' }}>
-        <Video
-          src=""
-          poster="https://via.placeholder.com/800x450"
-          controls
-          style={{ width: '100%', height: '100%' }}
-        />
+      <div style={{ width: '100%', aspectRatio: '16/9', background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ color: '#fff', fontSize: 18 }}>直播间 - 视频播放区域</div>
       </div>
       <div style={{ padding: 16 }}>
         <h3>直播间</h3>

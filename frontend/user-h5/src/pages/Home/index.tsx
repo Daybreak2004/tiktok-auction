@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react'
-import { Card, Grid, Image, Space, Tag, Toast } from 'antd-mobile'
+import { Card, Grid, Image, Tag } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
 import { useProductStore } from '@/store/useProductStore'
-import type { Product } from '@/types/product'
-import { getProductList } from '@/services/product'
 
 const Home: React.FC = () => {
   const navigate = useNavigate()
-  const { productList, loading, total, fetchProducts } = useProductStore()
+  const { productList, fetchProducts } = useProductStore()
 
   useEffect(() => {
     fetchProducts()

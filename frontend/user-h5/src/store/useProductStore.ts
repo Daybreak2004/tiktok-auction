@@ -23,7 +23,7 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async (params) => {
     set({ loading: true })
     try {
-      const res = await getProductList(params)
+      const res: any = await getProductList(params)
       set({
         productList: res.list,
         total: res.total,
