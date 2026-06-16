@@ -16,7 +16,7 @@ const { Header, Sider, Content } = Layout
 const MainLayout: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, logout } = useAuthStore()
+  const { user, logout } = useAuthStore() as any
 
   const menuItems = [
     {
